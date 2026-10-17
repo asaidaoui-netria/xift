@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Xift</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<svg width="0" height="0" style="position: absolute" aria-hidden="true">
+    <symbol id="i-mark" viewBox="0 0 64 64" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path class="fg" d="M16 16L26.5 26.5M37.5 37.5L48 48" stroke-width="5"/>
+        <path class="fg" d="M14 50L18.7 50.2L15.3 42.3L23.9 46.4L20.2 38.2L27.7 41.2L25.7 34.7L30.8 35.3L32 32" stroke-width="2.6" opacity="0.7"/>
+        <path class="hi" d="M32 32L50 14" stroke-width="5.6"/>
+    </symbol>
+    <symbol id="i-ok" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M6.5 10.2l2.3 2.3 4.7-5"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="8"/><path d="M8 7v6M12 7v6"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="8"/><path d="M10 6v5M10 14h0"/></symbol>
+    <symbol id="i-off" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="8"/><path d="M6 10h8"/></symbol>
+    <symbol id="i-focus" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="3" width="10" height="14" rx="2"/><path d="M2 6v8M18 6v8"/></symbol>
+    <symbol id="i-replies" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h14v8H9l-4 3v-3H3z"/></symbol>
+    <symbol id="i-seen" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 10S5 4 10 4s8.5 6 8.5 6-3.5 6-8.5 6-8.5-6-8.5-6z"/><circle cx="10" cy="10" r="2.5"/></symbol>
+    <symbol id="r-bait" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v7.5a3 3 0 1 1-6 0V8"/><path d="M3 8l-1.5 1.5"/><circle cx="9" cy="2" r="0.8"/></symbol>
+    <symbol id="r-rage" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 14.5c3 0 5-2 5-4.7 0-2.6-2-4-2.6-6.3-1 1.3-1.4 2.3-1.4 3.3C7.8 5.3 6.5 3 6.8 1.5 4.4 3.3 3 6 3 9.8c0 2.7 2 4.7 5 4.7z"/></symbol>
+    <symbol id="r-low" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M2 5h12M2 8h8M2 11h5"/></symbol>
+    <symbol id="r-promo" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7v2l9 4V3z"/><path d="M5 9.5l.8 3.5"/><path d="M13.5 6.3v3.4"/></symbol>
+    <symbol id="r-little" viewBox="0 0 16 16" fill="currentColor"><circle cx="3.5" cy="8" r="1.3"/><circle cx="8" cy="8" r="1.3"/><circle cx="12.5" cy="8" r="1.3"/></symbol>
+    <symbol id="r-you" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><path d="M3.8 3.8l8.4 8.4"/></symbol>
+    <symbol id="i-people" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="11" r="5"/><path d="M4 26c0-5 4-8 9-8s9 3 9 8"/><path d="M21 15l3 3 6-6"/></symbol>
+</svg>
+
+<header class="head">
+    <svg class="mark" data-tip="Xift: collapses noisy posts on X, judged by Jev"><use href="#i-mark"/></svg>
+    <h1 class="name">Xift</h1>
+    <label class="switch" data-tip="Xift on or off"><input type="checkbox" id="enabled" aria-label="Xift on"><span></span></label>
+</header>
+
+<div class="status" id="status" role="status" tabindex="0"></div>
+
+<div class="quick">
+    <button class="tile" id="focus" aria-pressed="false" data-tip="Focus mode: one post at a time, wider. Also with the f key."><svg><use href="#i-focus"/></svg>Focus <kbd>f</kbd></button>
+    <button class="tile" id="judgeReplies" aria-pressed="false" data-tip="Judge the replies on a post's page"><svg><use href="#i-replies"/></svg>Replies</button>
+    <button class="tile" id="openSeen" data-tip="Your reading history. Opens in a tab."><svg><use href="#i-seen"/></svg>Seen <span class="n" id="seenCount"></span></button>
+</div>
+
+<nav class="tabs" role="tablist">
+    <button role="tab" id="tab-today" aria-selected="true" aria-controls="panel-today">Today</button>
+    <button role="tab" id="tab-tune" aria-selected="false" aria-controls="panel-tune">Sensitivity</button>
+    <button role="tab" id="tab-people" aria-selected="false" aria-controls="panel-people">Always show</button>
+    <button role="tab" id="tab-settings" aria-selected="false" aria-controls="panel-settings">Settings</button>
+</nav>
+
+<main class="scroll">
+    <section id="panel-today" role="tabpanel" aria-labelledby="tab-today">
+        <div class="hero"><span class="big" id="collapsed" tabindex="0">0</span><span class="of">sifted out</span></div>
+        <div class="stack" id="stack" data-link></div>
+        <div class="legend" id="legend" data-link></div>
+        <div class="money" id="money" tabindex="0"><span class="amt" id="spent">$0</span><span class="bar"><i id="spentBar"></i></span><small id="limitNote"></small><div class="since"><small id="spentSince"></small><button class="btn" id="resetSpend" data-tip="Counts this month's spending again from $0">Reset</button></div></div>
+    </section>
+
+    <section id="panel-tune" role="tabpanel" aria-labelledby="tab-tune" hidden>
+        <div class="scale"><span data-tip="Lower: Jev needs to be less sure, so more posts collapse">← stricter</span><span data-tip="Higher: only posts Jev is very sure about collapse">looser →</span></div>
+        <div id="sliders"></div>
+        <div class="tools"><button class="btn" id="reset" data-tip="Back to the defaults; your Keeps and Hides start teaching again from there">Reset</button></div>
+    </section>
+
+    <section id="panel-people" role="tabpanel" aria-labelledby="tab-people" hidden>
+        <div class="empty" id="trustedNone" data-tip="Show a collapsed post, then the person button under its avatar"><svg><use href="#i-people"/></svg><div>No one yet</div></div>
+        <ul class="people" id="trustedList"></ul>
+        <div class="addrow"><input id="trustedAdd" type="text" placeholder="@handle" spellcheck="false" autocomplete="off" aria-label="Add an author by handle" data-tip="Their posts will always show, and never go to Jev"><button class="btn" id="trustedAddBtn">Add</button></div>
+    </section>
+
+    <section id="panel-settings" role="tabpanel" aria-labelledby="tab-settings" hidden>
+        <div class="grp">Collapse</div>
+        <div class="set"><span data-tip="Promoted posts">Ads</span><label class="switch"><input type="checkbox" id="collapseAds" aria-label="Collapse ads"><span></span></label></div>
+        <div class="set"><span data-tip="Under 5 words and no photo, collapsed without asking Jev">Too short</span><label class="switch"><input type="checkbox" id="collapseLittleText" aria-label="Collapse posts with too little text"><span></span></label></div>
+        <div class="grp">Focus</div>
+        <div class="set"><span data-tip="How wide the post is in focus mode">Width</span><span class="seg" data-choice="focusWidth" role="group" aria-label="Focus width"><button value="760">760</button><button value="900">900</button><button value="fill">Fill</button></span></div>
+        <div class="set"><span data-tip="Post text size in focus mode">Text</span><span class="seg" data-choice="focusText" role="group" aria-label="Focus text size"><button value="x" data-tip="X's own size">X</button><button value="17">17</button><button value="19">19</button></span></div>
+        <div class="grp">Limits</div>
+        <div class="set"><label for="dailyLimit" data-tip="When the month's spending reaches it, Xift pauses until the 1st, or until you reset the spending or raise the limit. It counts from the 1st, or from your last reset. Empty for none.">Monthly limit $</label><input id="dailyLimit" type="number" min="0" step="0.01" placeholder="none"></div>
+        <div class="set"><label for="seenLimit" data-tip="How many read posts the Seen list keeps">Seen list</label><input id="seenLimit" type="number" min="100" max="100000" step="100" inputmode="numeric"></div>
+        <p class="confirm"><button class="btn danger" id="confirmLimit" hidden></button></p>
+        <div class="grp">Account</div>
+        <div class="set"><span data-tip="Who judges posts: Jev through OpenRouter, or a decision model in Ollama on this computer">Model</span><span class="seg" id="provider" role="group" aria-label="Model"><button value="openrouter">Jev</button><button value="local" data-tip="Needs Ollama, started with OLLAMA_ORIGINS=moz-extension://*">Local</button></span></div>
+        <div class="set" id="localRow" hidden><label for="localModel" data-tip="The Ollama model to ask, as you pulled it. clef-flash also reads photos.">Ollama model</label><input id="localModel" type="text" autocomplete="off" spellcheck="false" pattern="[\w.:\/\-]{1,100}" placeholder="tev1:4b"></div>
+        <div class="set"><span data-tip="Your OpenRouter key, stored in this Firefox profile">Key <span class="muted" id="keyState"></span></span><span><input id="key" type="password" autocomplete="off" spellcheck="false" placeholder="sk-or-…" hidden aria-label="OpenRouter key"><button class="btn" id="changeKey">Change</button></span></div>
+        <div class="set"><span data-tip="Firefox's permission for Xift to work on x.com">x.com <span class="muted" id="accessState"></span></span><button class="btn" id="grant" hidden>Allow</button></div>
+        <div class="grp">Log</div>
+        <div class="set"><span data-tip="Judged posts, your corrections and learning, as a file">Export</span><button class="btn" id="export">Export</button></div>
+        <div class="set"><span data-tip="Deletes the log and saved scores; your corrections stay">Clear</span><button class="btn danger" id="clear">Clear…</button></div>
+        <div class="grp">Help</div>
+        <div class="set"><span data-tip="Copies Xift's version, status and settings, then opens GitHub's issue form for you to paste them in. Xift sends nothing itself. Needs a GitHub account.">Report a problem</span><button class="btn" id="report">Report</button></div>
+        <div class="set"><span data-tip="Opens GitHub's form for ideas. Needs a GitHub account.">Suggest a feature</span><button class="btn" id="suggest">Suggest</button></div>
+    </section>
+</main>
+
+<script src="verdict.js"></script>
+<script src="db.js"></script>
+<script src="popup-model.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>

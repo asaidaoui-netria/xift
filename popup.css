@@ -1,0 +1,140 @@
+/* Xift's popup, "Paper & ink": warm paper and ink, a terracotta accent, an old-style serif for the name and numbers. */
+:root {
+    color-scheme: light dark;
+    --bg: #fbf8f2; --panel: #f3eee4; --line: #e4ddcf; --text: #1d1b16; --muted: #7a7466; --track: #ddd5c5;
+    --accent: #c2541d; --accent-soft: #f7e6da; --accent-text: #a8441a; --on-accent: #fff;
+    --good: #3f7d4e; --warn: #b7791f; --bad: #b42318; --status-bg: #f3eee4; --warn-bg: #fbefd9; --bad-bg: #fbe4e1;
+    --tip-bg: #2a2520; --tip-text: #f8f3ea; --mark-fg: #3b342c; --mark-hi: #c2541d;
+    --c-bait: #c2541d; --c-rage: #9b2c2c; --c-low: #8a8170; --c-promo: #5b7a3a; --c-little: #c9b48a; --c-you: #6b4f8a;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --radius: 8px; --radius-small: 6px;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #1b1916; --panel: #24211d; --line: #37322b; --text: #f3eee4; --muted: #a39d90; --track: #3d372f;
+        --accent: #e8794a; --accent-soft: #3a2519; --accent-text: #f0915f; --on-accent: #1b1916;
+        --good: #6fbf80; --warn: #e3a64a; --bad: #f07a6e; --status-bg: #24211d; --warn-bg: #33281a; --bad-bg: #3a1f1c;
+        --tip-bg: #f3eee4; --tip-text: #1b1916; --mark-fg: #e9e2d6; --mark-hi: #f2a65a;
+        --c-bait: #e8794a; --c-rage: #e05a5a; --c-low: #a39d90; --c-promo: #93b56b; --c-little: #d8c49a; --c-you: #a98bd0;
+    }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { width: 340px; height: 500px; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); color: var(--text); font: 13px/1.4 system-ui, -apple-system, sans-serif; }
+button { font: inherit; color: inherit; cursor: pointer; }
+[hidden] { display: none !important; }
+.muted { color: var(--muted); }
+
+/* Header */
+.head { display: flex; align-items: center; gap: 9px; padding: 11px 12px 8px; }
+.mark { width: 26px; height: 26px; flex: none; }
+/* The mark is drawn through <use>: its shapes match plain class rules, not ".mark .fg"; the variables still inherit. */
+.fg { stroke: var(--mark-fg); } .hi { stroke: var(--mark-hi); }
+.name { flex: 1; margin: 0; font: 600 17px/1.1 var(--serif); }
+.switch { position: relative; width: 38px; height: 22px; flex: none; }
+.switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.switch span { position: absolute; inset: 0; border-radius: 11px; background: var(--track); pointer-events: none; transition: background 120ms; }
+.switch span::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform 120ms; }
+.switch input:checked + span { background: var(--accent); }
+.switch input:checked + span::after { transform: translateX(16px); }
+.switch input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Status */
+.status { margin: 0 12px; padding: 7px 10px; border-radius: var(--radius); background: var(--status-bg); display: flex; gap: 8px; align-items: center; min-height: 36px; }
+.status .ico { width: 18px; height: 18px; flex: none; color: var(--good); }
+.status.warn { background: var(--warn-bg); } .status.warn .ico { color: var(--warn); }
+.status.bad { background: var(--bad-bg); } .status.bad .ico { color: var(--bad); }
+.status.off .ico { color: var(--muted); }
+.status b { flex: 1; font-weight: 600; }
+.status input { flex: 1; min-width: 0; }
+.btn { border: 1px solid var(--line); background: var(--panel); border-radius: var(--radius-small); padding: 3px 10px; font-size: 12px; white-space: nowrap; }
+.btn:hover { border-color: var(--muted); }
+.btn.danger { color: var(--bad); }
+input[type="text"], input[type="number"], input[type="password"] { font: inherit; color: inherit; background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius-small); padding: 4px 7px; }
+input:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* Tiles */
+.quick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 9px 12px 8px; }
+.tile { display: flex; align-items: center; justify-content: center; gap: 7px; border: 1px solid var(--line); background: var(--panel); border-radius: var(--radius); padding: 8px 6px; font-weight: 600; font-size: 12.5px; transition: background 120ms, border-color 120ms, color 120ms; }
+.tile svg { width: 17px; height: 17px; flex: none; color: var(--muted); transition: color 120ms; }
+.tile[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-text); }
+.tile[aria-pressed="true"] svg { color: var(--accent-text); }
+.tile .n { font-weight: 500; color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+kbd { font: 10px ui-monospace, monospace; border: 1px solid currentColor; border-radius: 3px; padding: 0 3px; opacity: 0.7; }
+
+/* Tabs */
+.tabs { display: flex; gap: 2px; padding: 0 8px; border-bottom: 1px solid var(--line); }
+.tabs button { border: none; background: none; padding: 7px 8px; color: var(--muted); border-bottom: 2px solid transparent; font-size: 12.5px; white-space: nowrap; }
+.tabs button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
+.scroll { flex: 1; overflow: auto; padding: 12px; }
+
+/* Today */
+.hero { display: flex; align-items: baseline; gap: 6px; margin-bottom: 8px; }
+.hero .big { font: 600 34px/1 var(--serif); color: var(--accent-text); font-variant-numeric: tabular-nums; }
+.hero .of { color: var(--muted); }
+.stack { display: flex; height: 12px; border-radius: 6px; overflow: hidden; gap: 2px; margin-bottom: 10px; background: var(--track); }
+.stack i { display: block; transition: opacity 120ms; }
+.legend { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 12px; }
+.legend div { display: flex; align-items: center; gap: 6px; font-size: 12px; padding: 1px 2px; border-radius: 4px; transition: opacity 120ms, background 120ms; }
+.legend svg { width: 14px; height: 14px; flex: none; }
+.legend b { margin-left: auto; font-variant-numeric: tabular-nums; }
+.dimmed .stack i:not(.lit), .dimmed .legend div:not(.lit) { opacity: 0.3; }
+.legend div.lit { background: var(--panel); }
+.money { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding: 8px 10px; border-radius: var(--radius); background: var(--panel); }
+.money .amt { font: 600 15px/1 var(--serif); font-variant-numeric: tabular-nums; }
+.money .bar { flex: 1; height: 6px; border-radius: 3px; background: var(--track); overflow: hidden; }
+.money .bar i { display: block; height: 100%; width: 0; background: var(--accent); }
+.money.warn .bar i { background: var(--warn); }
+.money small { color: var(--muted); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.money { flex-wrap: wrap; row-gap: 6px; }
+.money .since { flex-basis: 100%; display: flex; align-items: center; justify-content: space-between; }
+
+/* Sensitivity */
+.scale { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--muted); margin: 0 0 8px 26px; }
+.q { display: grid; grid-template-columns: 18px 1fr 36px; align-items: center; gap: 2px 8px; margin-bottom: 12px; }
+.q svg { width: 16px; height: 16px; }
+.q b { font-weight: 600; font-size: 12.5px; }
+.q .moved { font-size: 10.5px; color: var(--accent-text); margin-left: 4px; font-weight: 500; }
+.q output { font: 600 13px/1 var(--serif); text-align: right; font-variant-numeric: tabular-nums; }
+.q .rng { grid-column: 2 / 4; position: relative; }
+.q input { width: 100%; margin: 0; accent-color: var(--accent); }
+.q .tick { position: absolute; top: -4px; width: 10px; height: 10px; margin-left: -5px; display: grid; place-items: center; }
+.q .tick::before { content: ""; width: 2px; height: 8px; border-radius: 1px; background: var(--muted); }
+.tools { display: flex; justify-content: flex-end; }
+
+/* Always show */
+.people { list-style: none; margin: 0 0 8px; padding: 0; }
+.people li { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--line); }
+.people .av { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 700; color: var(--on-accent); background: var(--accent); }
+.people .h { flex: 1; }
+.people .x { border: none; background: none; color: var(--muted); font-size: 15px; border-radius: 4px; }
+.people .x:hover { color: var(--bad); }
+.empty { display: grid; justify-items: center; gap: 4px; color: var(--muted); padding: 18px 8px 12px; }
+.empty svg { width: 34px; height: 34px; color: var(--accent); opacity: 0.85; }
+.addrow { display: flex; gap: 6px; }
+.addrow input { flex: 1; min-width: 0; }
+
+/* Settings */
+.set { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.set input[type="number"] { width: 6.5em; }
+.set input[type="password"] { width: 10em; margin-right: 6px; }
+.grp { font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); margin: 10px 0 0; }
+.grp:first-child { margin-top: 0; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: var(--radius-small); overflow: hidden; }
+.seg button { border: none; background: none; padding: 2px 8px; font-size: 12px; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+.confirm { margin: 4px 0 0; text-align: right; }
+.confirm:has(button[hidden]) { display: none; }
+
+/* Hover tips: after a short rest, or at once on keyboard focus; kept inside the popup */
+.tip { position: fixed; z-index: 10; max-width: 240px; padding: 6px 9px; border-radius: 7px; background: var(--tip-bg); color: var(--tip-text); font-size: 12px; line-height: 1.35;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25); pointer-events: none; opacity: 0; transform: translateY(4px); transition: opacity 120ms ease-out, transform 120ms ease-out; }
+.tip.show { opacity: 1; transform: none; }
+.tip.leaving { transition-duration: 80ms; }
+.tip::after { content: ""; position: absolute; left: var(--arrow, 50%); width: 8px; height: 8px; margin-left: -4px; background: inherit; transform: rotate(45deg); }
+.tip.below::after { top: -4px; }
+.tip:not(.below)::after { bottom: -4px; }
+@media (prefers-reduced-motion: reduce) {
+    .tip, .tip.show { transition: none; transform: none; }
+    .stack i, .legend div, .tile, .switch span, .switch span::after { transition: none; }
+}

@@ -1,0 +1,23 @@
+name: Suggest a feature
+description: An idea or a change you'd like in Xift.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: Issues here are public.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's missing or in your way
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What you'd like Xift to do
+    validations:
+      required: true
+  - type: textarea
+    id: today
+    attributes:
+      label: What you do today instead

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Seen posts</title>
+<style>
+    /* X's own colours: Lights out in dark mode, Default in light mode. */
+    :root {
+        color-scheme: light; --bg: #fff; --text: #0f1419; --muted: #536471; --line: #eff3f4; --hover: rgba(0, 0, 0, 0.03); --field: #eff3f4; --accent: #1d9bf0; --head: rgba(255, 255, 255, 0.85);
+        font: 15px/20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+        :root { color-scheme: dark; --bg: #000; --text: #e7e9ea; --muted: #71767b; --line: #2f3336; --hover: rgba(255, 255, 255, 0.03); --field: #202327; --head: rgba(0, 0, 0, 0.65); }
+    }
+    body { margin: 0; background: var(--bg); color: var(--text); }
+    main { max-width: 600px; margin: 0 auto; min-height: 100vh; border-inline: 1px solid var(--line); box-sizing: border-box; }
+    .top { position: sticky; top: 0; z-index: 2; background: var(--head); backdrop-filter: blur(12px); padding: 8px 16px 12px; border-bottom: 1px solid var(--line); }
+    h1 { font-size: 20px; line-height: 24px; font-weight: 800; margin: 4px 0 0; }
+    #count { color: var(--muted); font-size: 13px; line-height: 16px; margin: 0 0 10px; font-variant-numeric: tabular-nums; }
+    .search { display: flex; align-items: center; gap: 12px; background: var(--field); border-radius: 999px; padding: 0 16px; border: 1px solid transparent; }
+    .search:focus-within { border-color: var(--accent); background: var(--bg); }
+    .search svg { width: 18px; height: 18px; fill: var(--muted); flex: none; }
+    .search:focus-within svg { fill: var(--accent); }
+    input[type="search"] { flex: 1; min-width: 0; border: 0; background: none; color: inherit; font: inherit; padding: 11px 0; outline: none; }
+    #fresh { display: block; margin: 10px auto 0; background: var(--accent); color: #fff; border: 0; font-weight: 700; }
+    h2 { font-size: 15px; font-weight: 800; margin: 0; padding: 14px 16px 10px; border-bottom: 1px solid var(--line); }
+    a.post { display: flex; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--line); color: inherit; text-decoration: none; content-visibility: auto; contain-intrinsic-size: auto 120px; }
+    a.post:is(:hover, :focus-visible) { background: var(--hover); outline: none; }
+    .avatar { flex: none; width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: var(--line); }
+    .avatar.org { border-radius: 4px; }
+    .avatar.small { width: 20px; height: 20px; }
+    .avatar img, .media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .body { flex: 1; min-width: 0; }
+    .head, .qhead { display: flex; align-items: center; gap: 4px; white-space: nowrap; min-width: 0; }
+    .name { font-weight: 700; overflow: hidden; text-overflow: ellipsis; flex-shrink: 1; }
+    .badge { width: 18.75px; height: 18.75px; flex: none; margin-left: -2px; }
+    .handle { color: var(--muted); overflow: hidden; text-overflow: ellipsis; flex-shrink: 2; }
+    .date { color: var(--muted); flex: none; }
+    .seen { margin-left: auto; padding-left: 8px; color: var(--muted); font-size: 13px; flex: none; }
+    .text { white-space: pre-wrap; overflow-wrap: anywhere; }
+    .link { color: var(--accent); }
+    mark { background: rgba(29, 155, 240, 0.3); color: inherit; border-radius: 2px; }
+    .media { margin-top: 12px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: grid; gap: 2px; aspect-ratio: 16 / 9; background: var(--line); }
+    .media.n1 { aspect-ratio: var(--r); width: min(100%, calc(510px * var(--r))); box-sizing: border-box; }
+    .media.n2 { grid-template-columns: 1fr 1fr; }
+    .media.n3 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+    .media.n3 > :first-child { grid-row: span 2; }
+    .media.n4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+    .media > div { position: relative; min-height: 0; background: var(--bg); }
+    .play { position: absolute; inset: 0; margin: auto; width: 60px; height: 60px; border-radius: 50%; background: var(--accent); border: 4px solid #fff; box-sizing: border-box; display: grid; place-items: center; }
+    .play::after { content: ""; border-left: 18px solid #fff; border-block: 11px solid transparent; margin-left: 5px; }
+    .tag { position: absolute; left: 12px; bottom: 12px; background: rgba(0, 0, 0, 0.77); color: #fff; font-size: 13px; line-height: 16px; font-weight: 700; padding: 0 4px; border-radius: 4px; }
+    .quote { margin-top: 12px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+    .quote .qhead { padding: 12px 12px 0; }
+    .quote .text { padding: 2px 12px 12px; }
+    .quote .media { margin: 0; border: 0; border-radius: 0; border-top: 1px solid var(--line); }
+    #empty { color: var(--muted); text-align: center; padding: 40px 16px; margin: 0; }
+    #more { height: 1px; }
+    .foot { padding: 24px 16px 48px; }
+    button { font-weight: 700; font-size: 14px; line-height: 1; font-family: inherit; padding: 9px 16px; border-radius: 999px; border: 1px solid var(--line); background: none; color: var(--text); cursor: pointer; }
+    #clear:is(:hover, :focus-visible) { border-color: #f4212e; color: #f4212e; }
+    [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+    <div class="top">
+        <h1>Seen posts</h1>
+        <p id="count" role="status"></p>
+        <label class="search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781c-1.447 1.142-3.276 1.824-5.262 1.824-4.694 0-8.5-3.806-8.5-8.5z"/></svg>
+            <input id="q" type="search" placeholder="Search seen posts" aria-label="Search seen posts" autofocus>
+        </label>
+        <button id="fresh" type="button" hidden></button>
+    </div>
+    <div id="list"></div>
+    <p id="empty" hidden></p>
+    <div id="more"></div>
+    <div class="foot"><button id="clear" type="button">Clear Seen list</button></div>
+</main>
+<script src="db.js"></script>
+<script src="seen.js"></script>
+</body>
+</html>

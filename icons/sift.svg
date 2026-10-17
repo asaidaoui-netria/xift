@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Xift's tile, the Gate X: one stroke is the gate, split in the middle; the other is a post's line, noisy until it
+       passes through the gap, clean after. -->
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e06a2f"/><stop offset="0.55" stop-color="#c2541d"/><stop offset="1" stop-color="#8f3512"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe29a"/><stop offset="0.5" stop-color="#ffc163"/><stop offset="1" stop-color="#f29a3a"/></linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#tile)"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 16L26.5 26.5M37.5 37.5L48 48" stroke="#fff6ea" stroke-width="5"/>
+    <path d="M14 50L18.7 50.2L15.3 42.3L23.9 46.4L20.2 38.2L27.7 41.2L25.7 34.7L30.8 35.3L32 32" stroke="#fff6ea" stroke-width="2.6" opacity="0.7"/>
+    <path d="M32 32L50 14" stroke="url(#gold)" stroke-width="5.6" filter="url(#glow)"/>
+  </g>
+</svg>

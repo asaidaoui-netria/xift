@@ -1,0 +1,253 @@
+/* Xift's styles. Everything keys off data-sift on X's timeline cells and Xift's own elements. */
+
+/* Waiting for Jev: a blur, which changes no layout. */
+[data-sift="pending"] article {
+    filter: blur(6px);
+}
+
+/* Collapsed: the cell's own content (the post and its separator) gives way to Xift's bar.
+   A reply or "Show more" row that follows a collapsed post is hidden with it. */
+[data-sift="collapsed"] > :not(.sift-bar),
+[data-sift="follow"] > * {
+    display: none !important;
+}
+
+.sift-bar {
+    display: none;
+}
+
+[data-sift="collapsed"] > .sift-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    border-bottom: 1px solid rgba(113, 118, 123, 0.25);
+    font: 13px/1.3 system-ui, sans-serif;
+    color: #71767b; /* X's secondary text colour, readable in light and dark */
+}
+
+.sift-bar-reason {
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.sift-bar-who {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Your Hide (and, after Show, Keep) buttons: a column under the avatar, shown on hover or keyboard focus.
+   content.js sets top and left from the avatar's position; these are the fallbacks. */
+.sift-fix {
+    position: absolute;
+    top: 64px;
+    left: 19px;
+    z-index: 2;
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* Keyboard focus only: X leaves focus on a post you clicked or came back to, which would pin the buttons. */
+[data-testid="cellInnerDiv"]:not([data-sift]):is(:hover, :has(:focus-visible)) > .sift-fix {
+    display: flex;
+}
+
+.sift-fix button {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #71767b;
+    cursor: pointer;
+}
+
+.sift-fix svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.sift-fix button:is(:hover, :focus-visible) {
+    background: rgba(29, 155, 240, 0.1); /* X's own icon-button hover */
+    color: #1d9bf0;
+}
+
+.sift-bar button {
+    padding: 3px 10px;
+    border: 1px solid #71767b;
+    border-radius: 999px;
+    background: transparent;
+    color: #71767b;
+    font: 600 12px/1.2 system-ui, sans-serif;
+    cursor: pointer;
+}
+
+.sift-bar button:is(:hover, :focus-visible) {
+    border-color: #1d9bf0;
+    color: #1d9bf0;
+}
+
+/* X's left menu, the desktop one that holds the Home link: its items, Post and the account button are hidden in
+   place unless Xift is off. The X logo and the column stay, so the timeline doesn't move and hover still works.
+   They show while you hover the column, Tab into it, have More or the account menu open, or hold ⌥ (content.js
+   sets data-sift-nav): sliding 14px in from the left while fading, after a 100 ms wait so a passing pointer or an
+   ⌥ shortcut doesn't trigger it. Hiding is quicker and has no wait. */
+html:not([data-sift-off]) header[role="banner"]:has([data-testid="AppTabBar_Home_Link"]) > div > div :is(nav[role="navigation"], [data-testid="SideNav_NewTweet_Button"], [data-testid="SideNav_AccountSwitcher_Button"]) {
+    opacity: 0;
+    transform: translateX(-14px);
+    transition: opacity 120ms ease-in, transform 120ms ease-in;
+}
+
+html:not([data-sift-off]) header[role="banner"]:has([data-testid="AppTabBar_Home_Link"]) > div > div:is(:hover, :has(:focus-visible, [aria-expanded="true"])) :is(nav[role="navigation"], [data-testid="SideNav_NewTweet_Button"], [data-testid="SideNav_AccountSwitcher_Button"]),
+html[data-sift-nav]:not([data-sift-off]) header[role="banner"]:has([data-testid="AppTabBar_Home_Link"]) > div > div :is(nav[role="navigation"], [data-testid="SideNav_NewTweet_Button"], [data-testid="SideNav_AccountSwitcher_Button"]) {
+    opacity: 1;
+    transform: none;
+    transition: opacity 180ms cubic-bezier(0.2, 0.8, 0.2, 1) 100ms, transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1) 100ms;
+}
+
+/* With macOS "Reduce motion": no slide or fade for the menu or the right column, just the wait. */
+@media (prefers-reduced-motion: reduce) {
+    html:not([data-sift-off]) header[role="banner"]:has([data-testid="AppTabBar_Home_Link"]) > div > div :is(nav[role="navigation"], [data-testid="SideNav_NewTweet_Button"], [data-testid="SideNav_AccountSwitcher_Button"]) {
+        transform: none !important;
+        transition: none;
+    }
+    html:not([data-sift-off]) header[role="banner"]:has([data-testid="AppTabBar_Home_Link"]) > div > div:is(:hover, :has(:focus-visible, [aria-expanded="true"])) :is(nav[role="navigation"], [data-testid="SideNav_NewTweet_Button"], [data-testid="SideNav_AccountSwitcher_Button"]),
+    html[data-sift-nav]:not([data-sift-off]) header[role="banner"]:has([data-testid="AppTabBar_Home_Link"]) > div > div :is(nav[role="navigation"], [data-testid="SideNav_NewTweet_Button"], [data-testid="SideNav_AccountSwitcher_Button"]) {
+        transition: opacity 0s 100ms;
+    }
+    html:not([data-sift-off]) [data-testid="sidebarColumn"] > div {
+        left: 0 !important;
+        transition: none;
+    }
+    html:not([data-sift-off]) [data-testid="sidebarColumn"]:is(:hover, :has(:focus-visible, [aria-expanded="true"]:not([role="combobox"]))) > div,
+    html[data-sift-nav]:not([data-sift-off]) [data-testid="sidebarColumn"] > div {
+        transition: opacity 0s 100ms, pointer-events 0s 100ms allow-discrete;
+    }
+}
+
+/* X's right column (search box, trends, news, Who to follow, Premium) is hidden in place the same way, unless Xift
+   is off, so the timeline doesn't move. It shows while the pointer is over the column, while you hold ⌥ (with the
+   menu), while it holds keyboard focus (Tab, or X's / for its search box) or has a menu open: sliding 14px in from
+   the right while fading, like the menu. Not for the search box's own aria-expanded, which X leaves set after the box
+   loses focus; Escape leaves the box. The column stays put for hover and its one child, the layer holding X's sticky
+   and fixed parts, slides, so the edge doesn't flicker. It slides with `left`: a transform would detach those fixed
+   parts. Hidden, the layer takes no pointer events, and it takes them only once showing starts after the wait, so a
+   quick click as the pointer arrives can't hit an invisible Follow button. */
+html:not([data-sift-off]) [data-testid="sidebarColumn"] > div {
+    opacity: 0;
+    left: 14px;
+    pointer-events: none;
+    transition: opacity 120ms ease-in, left 120ms ease-in;
+}
+
+html:not([data-sift-off]) [data-testid="sidebarColumn"]:is(:hover, :has(:focus-visible, [aria-expanded="true"]:not([role="combobox"]))) > div,
+html[data-sift-nav]:not([data-sift-off]) [data-testid="sidebarColumn"] > div {
+    opacity: 1;
+    left: 0;
+    pointer-events: auto;
+    transition: opacity 180ms cubic-bezier(0.2, 0.8, 0.2, 1) 100ms, left 180ms cubic-bezier(0.2, 0.8, 0.2, 1) 100ms, pointer-events 0s 100ms allow-discrete;
+}
+
+/* The ⌥ + number badges, on each item's icon corner: anything further out is clipped by the menu's scroll area. */
+html[data-sift-nav] header[role="banner"] [data-sift-key]::after {
+    content: attr(data-sift-key);
+    position: absolute;
+    top: 4px;
+    inset-inline-start: 4px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    box-sizing: border-box;
+    border-radius: 8px;
+    background: #71767b; /* X's secondary grey, readable in light and dark */
+    color: #fff;
+    font: 700 11px/16px system-ui, sans-serif;
+    text-align: center;
+    pointer-events: none;
+}
+
+/* Focus mode (content.js sets data-sift-focus on Home, search and lists while it is on, and drops it while ⌥ is
+   held): one post at a time, wider and centred. X's right column goes, its left column shrinks to the logo, and every
+   cell but the current one is hidden. Hidden, not removed: X measures every cell to place it. Only while a cell is
+   marked current, so a lost mark shows the feed rather than a blank page. X's loading spinner (a cell with no post)
+   stays. */
+html[data-sift-focus] [data-testid="sidebarColumn"] {
+    display: none !important;
+}
+
+html[data-sift-focus] header[role="banner"] {
+    flex: 0 0 0px !important;
+    min-width: 0 !important;
+    align-items: flex-start !important;
+}
+
+html[data-sift-focus] main[role="main"] {
+    align-items: center !important;
+}
+
+html[data-sift-focus] main[role="main"] > div {
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+}
+
+/* The width, capped so the post's left edge stays 24 px clear of the logo (which ends at most 120 px in). Focus mode
+   needs a window at least 904 px wide, so the cap never goes under X's own 600 px column. */
+html[data-sift-focus] [data-testid="primaryColumn"] {
+    width: min(900px, 100vw - 304px) !important;
+    max-width: none !important;
+}
+
+html[data-sift-focus][data-sift-width="760"] [data-testid="primaryColumn"] {
+    width: min(760px, 100vw - 304px) !important;
+}
+
+html[data-sift-focus][data-sift-width="fill"] [data-testid="primaryColumn"] {
+    width: min(1100px, 100vw - 304px) !important;
+}
+
+html[data-sift-focus] [data-testid="primaryColumn"] > div > div {
+    max-width: none !important;
+}
+
+html[data-sift-focus] [data-testid="primaryColumn"]:has([data-sift-current]) [data-testid="cellInnerDiv"]:not([data-sift-current]):not(:has([role="progressbar"]):not(:has(article))) {
+    visibility: hidden;
+}
+
+html[data-sift-focus][data-sift-text="17"] [data-testid="primaryColumn"] [data-testid="tweetText"] {
+    font-size: 17px !important;
+    line-height: 24px !important;
+}
+
+html[data-sift-focus][data-sift-text="19"] [data-testid="primaryColumn"] [data-testid="tweetText"] {
+    font-size: 19px !important;
+    line-height: 26px !important;
+}
+
+/* X's menu layer sits above the timeline (the banner has z-index 3) and covers a wide post's left edge, so it takes
+   no pointer events, except the logo, and doesn't show on hover. ⌥ brings X's normal layout back, menu included;
+   Tab still shows it. */
+html[data-sift-focus] header[role="banner"]:has([data-testid="AppTabBar_Home_Link"]) > div > div {
+    pointer-events: none;
+}
+
+html[data-sift-focus] header[role="banner"]:has([data-testid="AppTabBar_Home_Link"]) h1 {
+    pointer-events: auto;
+}
+
+html[data-sift-focus]:not([data-sift-nav]) header[role="banner"]:has([data-testid="AppTabBar_Home_Link"]) > div > div:not(:has(:focus-visible, [aria-expanded="true"])) :is(nav[role="navigation"], [data-testid="SideNav_NewTweet_Button"], [data-testid="SideNav_AccountSwitcher_Button"]) {
+    opacity: 0 !important;
+    transform: translateX(-14px) !important;
+}

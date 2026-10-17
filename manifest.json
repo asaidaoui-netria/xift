@@ -1,0 +1,21 @@
+{
+    "manifest_version": 3,
+    "name": "Xift",
+    "version": "0.1.0",
+    "description": "Collapses noisy X posts and ads into expandable bars, and learns from your Keep and Hide clicks. Uses the Jev decision model.",
+    "background": { "scripts": ["verdict.js", "jev.js", "db.js", "background.js"] },
+    "content_scripts": [
+        { "matches": ["https://x.com/*"], "js": ["verdict.js", "content.js"], "css": ["filter.css"] }
+    ],
+    "permissions": ["storage"],
+    "host_permissions": ["https://openrouter.ai/*", "https://x.com/*"],
+    "icons": { "48": "icons/sift.svg", "96": "icons/sift.svg" },
+    "action": { "default_popup": "popup.html", "default_area": "navbar", "default_title": "Xift", "default_icon": "icons/sift-toolbar.svg" },
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "xift@netria.dev",
+            "strict_min_version": "140.0",
+            "data_collection_permissions": { "required": ["websiteContent", "personalCommunications"] }
+        }
+    }
+}

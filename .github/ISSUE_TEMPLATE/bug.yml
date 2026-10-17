@@ -1,0 +1,22 @@
+name: Report a problem
+description: Something in Xift doesn't work as it should.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Issues here are public. Never paste your OpenRouter key.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what Xift did instead. A link to the post helps, if you're happy to share it.
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Xift's details
+      description: Xift copied these when you clicked Report in its popup (Settings → Help). Paste them here, and check them before you submit. They never include your key or what you read.
+      render: text
+    validations:
+      required: true

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+  <!-- The toolbar icon: ink and terracotta on light toolbars, paper and amber on dark ones. -->
+  <style>
+    .fg { stroke: #3b342c; } .hi { stroke: #c2541d; }
+    @media (prefers-color-scheme: dark) { .fg { stroke: #e9e2d6; } .hi { stroke: #f2a65a; } }
+  </style>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path class="fg" d="M3.2 3.2L6.1 6.1M9.9 9.9L12.8 12.8" stroke-width="1.7"/>
+    <path class="fg" d="M2.6 13.4L4.5 13.1L3.9 10.4L6.6 10.9L6.5 8.7L8 8" stroke-width="1.05" opacity="0.85"/>
+    <path class="hi" d="M8 8L13.4 2.6" stroke-width="2"/>
+  </g>
+</svg>
